@@ -6,7 +6,7 @@ extern crate alloc;
 
 use alloc::rc::{Rc, Weak};
 
-/// A thin wrapper around `std::rc::Weak<T>` suitable for use as a key.
+/// A thin wrapper around [`Weak`] suitable for use as a key.
 ///
 /// Equality and comparisons are implemented in terms of the inner value pointer and the hash is
 /// consistent with this definition. This is stable in the presence of internal mutability and
@@ -16,17 +16,41 @@ pub struct WeakKey<T> {
 }
 
 impl<T> WeakKey<T> {
-    /// Returns a `WeakKey<T>` with the inner `Weak<T>`.
+    /// Returns a [`WeakKey`] with the inner [`Weak`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use weakkey::WeakKey;
+    /// let weak = std::rc::Weak::<()>::new();
+    /// assert_eq!(WeakKey::new(weak.clone()), WeakKey::new(weak));
+    /// ```
     pub fn new(inner: Weak<T>) -> Self {
         Self { inner }
     }
 
-    /// Returns the inner `Weak<T>`.
+    /// Returns the inner [`Weak`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use weakkey::WeakKey;
+    /// let weak = std::rc::Weak::<()>::new();
+    /// assert!(WeakKey::new(weak.clone()).into_inner().ptr_eq(&weak));
+    /// ```
     pub fn into_inner(self) -> Weak<T> {
         self.inner
     }
 
-    /// Returns a reference to the inner `Weak<T>`.
+    /// Returns a reference to the inner [`Weak`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use weakkey::WeakKey;
+    /// let weak = std::rc::Weak::<()>::new();
+    /// assert!(WeakKey::new(weak.clone()).inner().ptr_eq(&weak));
+    /// ```
     pub fn inner(&self) -> &Weak<T> {
         &self.inner
     }
@@ -37,12 +61,26 @@ impl<T> WeakKey<T> {
     /// Returns [`None`] if the inner value has since been dropped.
     ///
     /// This is equivalent to `self.inner().upgrade()` but is provided for convenience.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use weakkey::WeakKey;
+    /// let weak = std::rc::Weak::<()>::new();
+    /// assert!(WeakKey::new(weak).upgrade().is_none());
+    /// ```
+    ///
+    /// ```
+    /// # use weakkey::WeakKey;
+    /// let rc = std::rc::Rc::new(());
+    /// assert!(WeakKey::new(std::rc::Rc::downgrade(&rc)).upgrade().is_some());
+    /// ```
     pub fn upgrade(&self) -> Option<Rc<T>> {
         self.inner.upgrade()
     }
 
-    // Equality and comparison will be implemented in terms of `key()`. Having it defined in a single
-    // place ensures they remain consistent.
+    // Equality and comparison will be implemented in terms of `key()`. Having it defined in a
+    // single place ensures they remain consistent.
     fn key(&self) -> *const T {
         self.inner.as_ptr()
     }
@@ -65,7 +103,8 @@ impl<T> core::fmt::Debug for WeakKey<T> {
 
 impl<T> PartialEq for WeakKey<T> {
     fn eq(&self, other: &Self) -> bool {
-        // This is identical to `Weak::ptr_eq` but clarifies that it agrees with the implementations of `Hash` and `Ord`.
+        // This is identical to `Weak::ptr_eq` but clarifies that it agrees with the
+        // implementations of `Hash` and `Ord`.
         self.key() == other.key()
     }
 }
