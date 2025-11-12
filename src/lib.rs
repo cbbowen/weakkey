@@ -7,7 +7,8 @@ extern crate alloc;
 #[cfg(doc)]
 extern crate std;
 
-pub mod arc;
-pub mod rc;
-
 mod generic;
+
+pub mod rc;
+pub mod sync;
+

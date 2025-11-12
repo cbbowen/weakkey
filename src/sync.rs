@@ -1,5 +1,5 @@
-mod rc;
+mod arc;
 mod weak;
 
-pub use rc::*;
+pub use arc::*;
 pub use weak::*;

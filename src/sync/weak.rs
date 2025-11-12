@@ -1,7 +1,7 @@
 use crate::generic;
 use alloc::sync::{Arc, Weak};
 
-impl<T> generic::Weak for Weak<T> {
+impl<T> generic::Pointer for Weak<T> {
     type Strong = Arc<T>;
     type Key = *const ();
 
@@ -20,7 +20,7 @@ impl<T> generic::Weak for Weak<T> {
 /// consistent with this definition. This is stable in the presence of internal mutability and
 /// when the inner value is dropped.
 pub struct WeakKey<T> {
-    inner: generic::WeakKey<Weak<T>>,
+    inner: generic::ByPointer<Weak<T>>,
 }
 
 impl<T> WeakKey<T> {
@@ -29,13 +29,13 @@ impl<T> WeakKey<T> {
     /// # Examples
     ///
     /// ```
-    /// # use weakkey::arc::WeakKey;
+    /// # use weakkey::sync::WeakKey;
     /// let weak = std::sync::Weak::<()>::new();
     /// assert_eq!(WeakKey::new(weak.clone()), WeakKey::new(weak));
     /// ```
     pub fn new(inner: Weak<T>) -> Self {
         Self {
-            inner: generic::WeakKey::new(inner),
+            inner: generic::ByPointer::new(inner),
         }
     }
 
@@ -44,7 +44,7 @@ impl<T> WeakKey<T> {
     /// # Examples
     ///
     /// ```
-    /// # use weakkey::arc::WeakKey;
+    /// # use weakkey::sync::WeakKey;
     /// let weak = std::sync::Weak::<()>::new();
     /// assert!(WeakKey::new(weak.clone()).into_inner().ptr_eq(&weak));
     /// ```
@@ -57,7 +57,7 @@ impl<T> WeakKey<T> {
     /// # Examples
     ///
     /// ```
-    /// # use weakkey::arc::WeakKey;
+    /// # use weakkey::sync::WeakKey;
     /// let weak = std::sync::Weak::<()>::new();
     /// assert!(WeakKey::new(weak.clone()).inner().ptr_eq(&weak));
     /// ```
@@ -75,13 +75,13 @@ impl<T> WeakKey<T> {
     /// # Examples
     ///
     /// ```
-    /// # use weakkey::arc::WeakKey;
+    /// # use weakkey::sync::WeakKey;
     /// let weak = std::sync::Weak::<()>::new();
     /// assert!(WeakKey::new(weak).upgrade().is_none());
     /// ```
     ///
     /// ```
-    /// # use weakkey::arc::WeakKey;
+    /// # use weakkey::sync::WeakKey;
     /// let arc = std::sync::Arc::new(());
     /// assert!(WeakKey::new(std::sync::Arc::downgrade(&arc)).upgrade().is_some());
     /// ```
