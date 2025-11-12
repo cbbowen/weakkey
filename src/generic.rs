@@ -81,3 +81,9 @@ impl<W: Pointer> From<W> for ByPointer<W> {
         Self::new(value)
     }
 }
+
+impl<W: Pointer> core::borrow::Borrow<W> for ByPointer<W> {
+    fn borrow(&self) -> &W {
+        &self.inner
+    }
+}
