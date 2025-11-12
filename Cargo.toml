@@ -1,7 +1,7 @@
 [package]
 name = "weakkey"
-version = "0.2.0"
-edition = "2021"
+version = "0.3.0"
+edition = "2024"
 readme = "README.md"
 license = "MIT"
 description = "Weak reference type usable as a key"
@@ -9,4 +9,4 @@ keywords = ["Arc", "Rc", "Weak", "no_std"]
 repository = "https://github.com/cbbowen/weakkey"
 
 [dev-dependencies]
-proptest = "1.2"
+proptest = "1.9"
