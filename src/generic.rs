@@ -15,7 +15,7 @@ pub struct ByPointer<W> {
     inner: W,
 }
 
-impl<W: Pointer> ByPointer<W> {
+impl<W: Pointer> ByPointer<W> { 
     pub fn new(inner: W) -> Self {
         Self { inner }
     }
